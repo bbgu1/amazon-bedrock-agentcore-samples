@@ -904,12 +904,12 @@ Resources:
         ContainerConfiguration:
           ContainerUri: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${AgentECRRepository}:build-1'
       ProtocolConfiguration: A2A
-      AuthorizerConfiguration:
-        CustomJWTAuthorizer:
-          DiscoveryUrl:
-            Fn::ImportValue: !Sub '${CognitoStackName}-DiscoveryUrl'
-          AllowedClients:
-            - Fn::ImportValue: !Sub '${CognitoStackName}-MonitoringClientId'
+    #  AuthorizerConfiguration:
+    #    CustomJWTAuthorizer:
+    #      DiscoveryUrl:
+    #        Fn::ImportValue: !Sub '${CognitoStackName}-DiscoveryUrl'
+    #      AllowedClients:
+    #        - Fn::ImportValue: !Sub '${CognitoStackName}-MonitoringClientId'
       EnvironmentVariables:
         MODEL_ID: !Ref BedrockModelId
         MCP_REGION: !Sub '${AWS::Region}'

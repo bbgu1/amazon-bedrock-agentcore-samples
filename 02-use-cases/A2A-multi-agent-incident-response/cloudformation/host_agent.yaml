@@ -92,6 +92,11 @@ Resources:
                 Resource:
                   - 'arn:aws:bedrock:*::foundation-model/*'
                   - !Sub 'arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:*'
+              - Sid: BedrockAgentCoreInvoke
+                Effect: Allow
+                Action: 
+                  - 'bedrock-agentcore:*'
+                Resource: '*'
               - Sid: SSMParameterAccess
                 Effect: Allow
                 Action:

@@ -1,3 +1,4 @@
+import boto3
 from a2a.client import ClientConfig, ClientFactory
 from a2a.types import TransportProtocol
 from bedrock_agentcore.identity.auth import requires_access_token
@@ -7,6 +8,15 @@ from urllib.parse import quote
 import httpx
 import os
 import uuid
+from botocore.auth import SigV4Auth
+from botocore.awsrequest import AWSRequest
+from requests_aws4auth import AWS4Auth
+import logging
+
+session = boto3.Session()
+credentials = session.get_credentials()
+service = 'bedrock-agentcore'
+logger = logging.getLogger(__name__)
 
 IS_DOCKER = os.getenv("DOCKER_CONTAINER", "0") == "1"
 
@@ -38,28 +48,30 @@ def _create_client_factory(provider_name: str, session_id: str, actor_id: str):
     def _get_authenticated_client() -> httpx.AsyncClient:
         """Create a fresh httpx client with authentication in current event loop."""
 
-        @requires_access_token(
-            provider_name=provider_name,
-            scopes=[],
-            auth_flow="M2M",
-            into="bearer_token",
-            force_authentication=True,
-        )
-        def _create_client(bearer_token: str = str()) -> httpx.AsyncClient:
+
+        #@requires_access_token(
+        #    provider_name=provider_name,
+        #    scopes=[],
+        #    auth_flow="M2M",
+        #    into="bearer_token",
+        #    force_authentication=True,
+        #)
+        # def _create_client(bearer_token: str = str()) -> httpx.AsyncClient:
             headers = {
-                "Authorization": f"Bearer {bearer_token}",
+         #       "Authorization": f"Bearer {bearer_token}",
                 "X-Amzn-Bedrock-AgentCore-Runtime-Session-Id": session_id,
                 # TODO: Actor Id
                 # "X-Amzn-Bedrock-AgentCore-Runtime-User-Id": actor_id,
             }
-
+            logger.info(f"Building httpx client with credentials {credentials}")
             return httpx.AsyncClient(
                 timeout=httpx.Timeout(timeout=300.0),
                 headers=headers,
                 limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+                auth=AWS4Auth(region, service, refreshable_credentials=credentials)
             )
 
-        return _create_client()
+        # return _create_client()
 
     class LazyClientFactory:
         """Factory that creates fresh httpx clients on each create() call."""

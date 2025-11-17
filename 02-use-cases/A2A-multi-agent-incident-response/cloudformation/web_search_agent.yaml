@@ -883,12 +883,12 @@ Resources:
         ContainerConfiguration:
           ContainerUri: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${AgentECRRepository}:build-1'
       ProtocolConfiguration: A2A
-      AuthorizerConfiguration:
-        CustomJWTAuthorizer:
-          DiscoveryUrl:
-            Fn::ImportValue: !Sub '${CognitoStackName}-DiscoveryUrl'
-          AllowedClients:
-            - Fn::ImportValue: !Sub '${CognitoStackName}-WebSearchClientId'
+    #  AuthorizerConfiguration:
+    #    CustomJWTAuthorizer:
+    #      DiscoveryUrl:
+    #        Fn::ImportValue: !Sub '${CognitoStackName}-DiscoveryUrl'
+    #      AllowedClients:
+    #        - Fn::ImportValue: !Sub '${CognitoStackName}-WebSearchClientId'
       EnvironmentVariables:
         MODEL_ID: !Ref OpenAIModelId
         MCP_REGION: !Sub '${AWS::Region}'
