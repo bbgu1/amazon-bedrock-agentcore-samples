@@ -16,6 +16,7 @@ import logging
 session = boto3.Session()
 credentials = session.get_credentials()
 service = 'bedrock-agentcore'
+
 logger = logging.getLogger(__name__)
 
 IS_DOCKER = os.getenv("DOCKER_CONTAINER", "0") == "1"
@@ -68,7 +69,7 @@ def _create_client_factory(provider_name: str, session_id: str, actor_id: str):
                 timeout=httpx.Timeout(timeout=300.0),
                 headers=headers,
                 limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
-                auth=AWS4Auth(region, service, refreshable_credentials=credentials)
+                auth=AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
             )
 
         return _create_client()
