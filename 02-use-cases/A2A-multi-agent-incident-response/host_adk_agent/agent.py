@@ -56,7 +56,7 @@ def _create_client_factory(provider_name: str, session_id: str, actor_id: str):
         #    into="bearer_token",
         #    force_authentication=True,
         #)
-        # def _create_client(bearer_token: str = str()) -> httpx.AsyncClient:
+        def _create_client(bearer_token: str = str()) -> httpx.AsyncClient:
             headers = {
          #       "Authorization": f"Bearer {bearer_token}",
                 "X-Amzn-Bedrock-AgentCore-Runtime-Session-Id": session_id,
@@ -71,7 +71,7 @@ def _create_client_factory(provider_name: str, session_id: str, actor_id: str):
                 auth=AWS4Auth(region, service, refreshable_credentials=credentials)
             )
 
-        # return _create_client()
+        return _create_client()
 
     class LazyClientFactory:
         """Factory that creates fresh httpx clients on each create() call."""
